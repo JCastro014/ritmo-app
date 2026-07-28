@@ -1,0 +1,135 @@
+/* ============================================================
+   RESPONSIVE CSS - Media queries for different screen sizes
+============================================================ */
+
+/* Utility classes for desktop/mobile visibility */
+.desktop-only{display:block;}
+.mobile-only{display:none;}
+
+@media(max-width:768px){
+  .desktop-only{display:none !important;}
+  .mobile-only{display:flex !important;}
+  
+  /* Hide scrollbars on mobile to prevent resize grip appearance */
+  html::-webkit-scrollbar, body::-webkit-scrollbar{display:none;}
+  html{-ms-overflow-style:none;scrollbar-width:none;}
+  
+  /* Bottom navigation bar */
+  .bottom-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 12px;
+    padding-bottom:calc(8px + env(safe-area-inset-bottom));
+    background:var(--topbar-bg);
+    backdrop-filter:blur(10px);
+    border-top:1px solid var(--border);
+    transition:background-color .35s var(--ease), border-color .35s var(--ease);
+  }
+  .bottom-nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:8px 4px;border:none;background:none;
+    cursor:pointer;color:var(--text-soft);
+    transition:all .15s var(--ease);
+  }
+  .bottom-nav-item:hover{color:var(--text);}
+  .bottom-nav-item.active{color:var(--accent);}
+  .bottom-nav-icon{font-size:20px;}
+  .bottom-nav-label{font-size:10px;font-weight:500;}
+  .bottom-nav-fab{
+    position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+    width:56px;height:56px;border-radius:50%;border:none;
+    background:var(--accent);color:#fff;font-size:28px;font-weight:300;line-height:1;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:0 10px 24px -6px rgba(79,70,229,.55);
+    transition:transform .2s var(--ease-pop), background .18s var(--ease), box-shadow .18s var(--ease);
+    animation:fabPop .45s var(--ease-pop);
+  }
+  .bottom-nav-fab:hover{background:var(--accent-hover);transform:translateX(-50%) translateY(-3px) scale(1.06) rotate(90deg);box-shadow:0 14px 28px -6px rgba(79,70,229,.6);}
+  .bottom-nav-fab:active{transform:translateX(-50%) translateY(0) scale(.9) rotate(90deg);}
+  
+  /* Adjust container padding for bottom nav */
+  .container{padding:calc(70px + env(safe-area-inset-top)) 14px 90px;}
+  .weekly-table{min-width:520px;}
+  .table-cell{min-width:90px;}
+  .task-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+  .calendar-grid{padding:14px;gap:6px;}
+  .calendar-day{min-height:64px;padding:6px;}
+  .calendar-check{width:14px;height:14px;}
+  .semester-panel{padding:16px 16px;}
+  .semester-week{font-size:19px;}
+  .brand h1{font-size:17px;}
+  .topbar{flex-wrap:nowrap;gap:6px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));}
+  .topbar-left{flex-shrink:0;}
+  .topbar-center{flex:1;min-width:0;gap:6px;}
+  .topbar-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:1;min-width:0;}
+  .topbar-tab{flex:0 0 auto;padding:5px 10px;font-size:12px;}
+  .view-context-bar{padding:4px 8px;gap:6px;flex-shrink:0;}
+  .view-context-pill{gap:4px;}
+  .view-context-label{display:none;}
+  .view-context-range{font-size:10px;white-space:nowrap;}
+  .view-context-btn{width:24px;height:24px;font-size:11px;}
+  
+  /* Horizontal scroll for weekly summary */
+  .weekly-summary-grid{
+    display:flex;flex-direction:row;gap:8px;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    padding-bottom:8px;
+    scroll-snap-type:x mandatory;
+  }
+  .summary-day{
+    flex:0 0 auto;min-width:80px;scroll-snap-align:start;
+  }
+  
+  .today-item{flex-direction:column;align-items:stretch;}
+  .today-item-right{flex-direction:row;flex-wrap:wrap;justify-content:space-between;gap:8px;width:100%;}
+  .today-metric{min-width:calc(50% - 4px);}
+}
+@media(max-width:560px){
+  .field-row{grid-template-columns:1fr;gap:0;}
+  .log-form{flex-direction:column;align-items:stretch;}
+  .log-form .field{min-width:0;}
+  .log-form .btn{width:100%;}
+  .stat-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .modal-body{padding:16px 16px 20px;}
+  .modal-head{padding:16px 16px 12px;}
+  .modal-foot{padding:12px 16px 18px;flex-wrap:wrap;}
+  .modal-foot .btn{flex:1;min-width:110px;}
+  .topbar{padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));}
+  .brand h1{display:none;}
+  .topbar-tabs{padding:3px;}
+  .topbar-tab{padding:4px 8px;font-size:11px;}
+  .view-context-bar{padding:3px 6px;gap:4px;}
+  .view-context-range{font-size:9px;}
+  .view-context-btn{width:20px;height:20px;font-size:10px;}
+}
+@media(max-width:480px){
+  .topbar{padding:6px 10px;padding-top:calc(6px + env(safe-area-inset-top));gap:4px;}
+  .brand-mark{width:24px;height:24px;font-size:11px;}
+  .brand h1{display:none;}
+  .topbar-tabs{padding:2px;gap:3px;}
+  .topbar-tab{padding:3px 6px;font-size:10px;}
+  .view-context-bar{padding:2px 4px;gap:3px;}
+  .view-context-range{font-size:8px;}
+  .view-context-btn{width:18px;height:18px;font-size:9px;}
+  .task-grid{grid-template-columns:1fr;}
+  .calendar-grid{grid-template-columns:repeat(7,minmax(28px,1fr));gap:4px;padding:10px;}
+  .calendar-day{min-height:52px;border-radius:6px;}
+  .calendar-day-number{font-size:11px;}
+  .calendar-check{width:12px;height:12px;border-radius:2px;}
+  .semester-dates{font-size:11px;}
+  .fab{width:50px;height:50px;font-size:22px;right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));}
+  .type-toggle{grid-template-columns:1fr 1fr;gap:8px;}
+  .type-toggle label{padding:10px 6px;font-size:12.5px;}
+  .weekly-table{min-width:420px;}
+  .modal-panel{max-width:95vw;}
+  .modal-body{padding:16px 14px 18px;}
+  .modal-head{padding:16px 14px 12px;}
+  .modal-foot{padding:12px 14px 14px;gap:8px;}
+  .modal-foot .btn{flex:1;min-width:90px;}
+  .summary-day{padding:10px 6px;}
+  .summary-day-name{font-size:10px;}
+  .summary-day-total{font-size:16px;}
+  .today-item-right{flex-direction:column;align-items:flex-start;}
+  .today-metric{min-width:100%;}
+  .heatmap-grid{grid-template-rows:repeat(5,10px);grid-auto-columns:13px;}
+}

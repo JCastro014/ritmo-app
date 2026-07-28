@@ -1,0 +1,97 @@
+/* ============================================================
+   LAYOUT CSS - Topbar, Container, Semester Panel
+============================================================ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  width:100%;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;flex-wrap:nowrap;
+  padding:14px 20px;
+  padding-top:calc(14px + env(safe-area-inset-top));
+  background:var(--topbar-bg);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  transition:background-color .35s var(--ease), border-color .35s var(--ease);
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-center{display:flex;align-items:center;gap:10px;flex:1;justify-content:center;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.topbar-tabs{
+  display:flex;gap:6px;
+  background:var(--bg-alt);
+  padding:4px;border-radius:var(--radius-sm);
+}
+.topbar-tab{
+  padding:6px 14px;border-radius:6px;border:none;background:none;
+  font-size:13px;font-weight:500;color:var(--text-soft);cursor:pointer;white-space:nowrap;
+  transition:all .15s var(--ease);
+}
+.topbar-tab:hover{background:var(--surface);color:var(--text);}
+.topbar-tab.active{background:var(--surface);color:var(--accent);font-weight:600;box-shadow:var(--shadow-sm);}
+.brand{display:flex;align-items:center;gap:10px;animation:fadeSlideUp .4s var(--ease) both;}
+.brand-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),#7C74F5);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-family:var(--font-mono);font-weight:600;font-size:13px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .2s var(--ease-pop);
+}
+.brand:hover .brand-mark{transform:rotate(-8deg) scale(1.08);}
+.brand h1{font-size:19px;font-weight:700;letter-spacing:-.01em;}
+.icon-btn{
+  width:36px;height:36px;border-radius:50%;
+  border:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;color:var(--text-soft);
+  transition:transform .18s var(--ease-pop), background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+  flex-shrink:0;
+}
+.icon-btn:hover{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft);transform:translateY(-1px) scale(1.06);}
+.icon-btn:active{transform:scale(.9);}
+#settingsBtn:hover{transform:translateY(-1px) rotate(45deg) scale(1.06);}
+#themeToggleBtn .theme-icon{display:inline-block;transition:transform .2s var(--ease);}
+#themeToggleBtn.spin .theme-icon{animation:iconFlip .5s var(--ease-pop);}
+
+.container{max-width:1400px;margin:0 auto;padding:calc(98px + env(safe-area-inset-top)) 20px 100px;min-height:calc(100vh - 80px);}
+
+/* ---------- semester panel ---------- */
+.semester-panel{
+  position:sticky;top:74px;z-index:15;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:20px 22px;
+  box-shadow:var(--shadow-sm);
+  margin-bottom:20px;
+  animation:fadeSlideUp .45s var(--ease) both;
+  transition:background-color .35s var(--ease), border-color .35s var(--ease);
+}
+.semester-panel.collapsed{padding:12px 16px;}
+.semester-panel.collapsed .semester-body{display:none;}
+.semester-panel.collapsed .semester-toggle-icon{transform:rotate(180deg);}
+.semester-toggle{
+  display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+  user-select:none;
+}
+.semester-toggle-icon{
+  transition:transform .2s var(--ease);
+}
+.semester-body{margin-top:12px;}
+.semester-empty{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.semester-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.semester-title{font-size:15px;font-weight:600;color:var(--text-soft);letter-spacing:.01em;}
+.semester-week{font-family:var(--font-display);font-size:22px;font-weight:700;}
+.semester-pct{font-family:var(--font-mono);font-size:13px;color:var(--text-soft);}
+.semester-dates{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--text-faint);font-family:var(--font-mono);}
+
+.view-context-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 12px;margin:0;border:1px solid var(--border);border-radius:999px;background:var(--bg-alt);box-shadow:var(--shadow-sm);flex-shrink:0;}
+.topbar .view-context-bar{justify-content:center;}
+.view-context-pill{display:flex;align-items:center;gap:8px;}
+.view-context-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint);}
+.view-context-range{font-size:12px;color:var(--text-soft);}
+.view-context-actions{display:flex;align-items:center;gap:4px;}
+.view-context-btn{width:32px;height:32px;font-size:14px;}
+
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 14px;}
+.section-head h2{font-size:16px;font-weight:600;}

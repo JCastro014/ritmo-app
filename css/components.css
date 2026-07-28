@@ -1,0 +1,186 @@
+/* ============================================================
+   COMPONENTS CSS - Progress Bar, Buttons, Cards, FAB
+============================================================ */
+/* ---------- ruler / progress bar ---------- */
+.ruler-track{
+  position:relative;height:10px;border-radius:99px;background:var(--bg-alt);
+  overflow:hidden;
+}
+.ruler-lg .ruler-track{height:14px;}
+.ruler-fill{
+  position:absolute;left:0;top:0;bottom:0;border-radius:99px;
+  width:0%;
+  transition:width var(--transition-normal) var(--ease), background-color var(--transition-normal) var(--ease);
+}
+.status-ongreen{background:var(--good);}
+.status-onyellow{background:var(--accent-hover);}
+.status-onattention{background:var(--attention);}
+.status-critical{background:var(--bad);}
+.status-overdue{background:var(--overdue);}
+.status-done{background:var(--accent);}
+.status-notstarted{background:var(--text-faint);}
+.status-inactive{background:var(--text-faint);}
+.ruler-marker{
+  position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text);
+  opacity:.5;transform:translateX(-1px);border-radius:2px;
+}
+.ruler-tick{
+  position:absolute;top:0;bottom:0;width:1px;background:var(--text-faint);
+  z-index:1;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  padding:10px 18px;border-radius:var(--radius-sm);border:1.5px solid var(--border);
+  background:var(--surface);color:var(--text);font-weight:600;font-size:14px;cursor:pointer;
+  transition:transform .16s var(--ease-pop), background .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
+}
+.btn:hover{background:var(--bg-alt);transform:translateY(-1px);}
+.btn:active{transform:scale(.94);}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+.btn-sm{padding:7px 12px;font-size:12.5px;}
+.btn-add-course{
+  margin-top:12px;padding:8px 16px;border:1.5px dashed var(--border-strong);
+  background:none;color:var(--text-soft);font-weight:600;font-size:13px;
+  cursor:pointer;border-radius:var(--radius-sm);transition:all .18s var(--ease-pop);
+}
+.btn-add-course:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:translateY(-1px);}
+.btn-danger{background:var(--bad-soft);border-color:var(--bad-soft);color:var(--bad);}
+.btn-danger:hover{background:var(--bad);border-color:var(--bad);color:#fff;}
+.btn-ghost{border-color:transparent;background:none;}
+.btn-ghost:hover{background:var(--bg-alt);}
+.btn-block{width:100%;}
+
+/* ---------- task grid & cards ---------- */
+.task-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;
+}
+.task-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:18px 18px 16px;cursor:pointer;
+  border-left:4px solid var(--border);
+  transition:transform .2s var(--ease-pop), box-shadow .18s var(--ease), border-color .18s var(--ease), background-color .35s var(--ease);
+  animation:popIn .4s var(--ease-pop) both;
+}
+.task-card:nth-child(1){animation-delay:.02s}
+.task-card:nth-child(2){animation-delay:.06s}
+.task-card:nth-child(3){animation-delay:.10s}
+.task-card:nth-child(4){animation-delay:.14s}
+.task-card:nth-child(5){animation-delay:.18s}
+.task-card:nth-child(6){animation-delay:.22s}
+.task-card:nth-child(7){animation-delay:.26s}
+.task-card:nth-child(n+8){animation-delay:.30s}
+.task-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:var(--shadow-md);}
+.task-card:active{transform:translateY(0) scale(.99);}
+.task-card.status-border-ongreen{border-left-color:var(--good);}
+.task-card.status-border-onyellow{border-left-color:var(--accent-hover);}
+.task-card.status-border-onattention{border-left-color:var(--attention);}
+.task-card.status-border-critical{border-left-color:var(--bad);}
+.task-card.status-border-overdue{border-left-color:var(--overdue);background:linear-gradient(180deg,var(--overdue-soft) 0%, var(--surface) 60px);}
+.task-card.status-border-done{border-left-color:var(--accent);opacity:.72;}
+.task-card.status-border-notstarted{border-left-color:var(--text-faint);}
+.task-card.status-border-inactive{border-left-color:var(--text-faint);}
+.task-card-inactive{opacity:0.6;}
+.task-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;}
+.task-icon{font-size:18px;margin-right:8px;}
+.category-dot{
+  width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;
+  flex-shrink:0;
+}
+.task-title-with-icon{display:flex;align-items:center;gap:6px;}
+.type-chip{
+  font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--text-soft);background:var(--bg-alt);padding:3px 8px;border-radius:99px;
+}
+.status-chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap;animation:popIn .3s var(--ease-pop) both;}
+.status-chip{transition:background-color var(--transition-normal) var(--ease), color var(--transition-normal) var(--ease);}
+.status-chip-ongreen{color:var(--good);background:var(--good-soft);}
+.status-chip-onyellow{color:var(--accent-hover);background:var(--accent-soft);}
+.status-chip-onattention{color:var(--attention);background:var(--attention-soft);}
+.status-chip-critical{color:var(--bad);background:var(--bad-soft);animation:popIn .3s var(--ease-pop) both, gentlePulse 2s var(--ease) infinite .3s;}
+.status-chip-overdue{color:var(--overdue);background:var(--overdue-soft);animation:popIn .3s var(--ease-pop) both, gentlePulse 2s var(--ease) infinite .3s;}
+.status-chip-done{color:var(--accent);background:var(--accent-soft);}
+.status-chip-notstarted{color:var(--text-faint);background:var(--bg-alt);}
+.status-chip-inactive{background:var(--bg-alt);color:var(--text-faint);}
+.task-name{font-size:16.5px;font-weight:600;margin-bottom:14px;letter-spacing:-.005em;line-height:1.3;}
+.task-card-meta{display:flex;justify-content:space-between;margin-top:9px;font-size:12.5px;color:var(--text-soft);}
+.task-card-meta .mono{font-size:12px;}
+
+/* ---------- empty state ---------- */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--text-soft);
+  border:1.5px dashed var(--border-strong);border-radius:var(--radius-lg);
+  animation:fadeSlideUp .4s var(--ease) both;
+}
+.empty-state .glyph{font-size:34px;margin-bottom:10px;animation:gentlePulse 2.4s var(--ease) infinite;}
+.empty-state h3{font-size:16px;margin-bottom:6px;color:var(--text);}
+
+/* ---------- fab ---------- */
+.fab{
+  position:fixed;right:24px;bottom:24px;z-index:15;
+  right:calc(24px + env(safe-area-inset-right));
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  width:56px;height:56px;border-radius:50%;border:none;
+  background:var(--accent);color:#fff;font-size:26px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 10px 24px -6px rgba(79,70,229,.55);
+  transition:transform .2s var(--ease-pop), background .18s var(--ease), box-shadow .18s var(--ease);
+  animation:fabPop .45s var(--ease-pop);
+}
+.fab:hover{background:var(--accent-hover);transform:translateY(-3px) scale(1.06) rotate(90deg);box-shadow:0 14px 28px -6px rgba(79,70,229,.6);}
+.fab:active{transform:translateY(0) scale(.9) rotate(90deg);}
+.fab.hidden{display:none;}
+
+/* ---------- task toggle button ---------- */
+.task-toggle-btn{
+  margin-left:auto;padding:4px 8px;font-size:14px;
+  transition:transform var(--transition-fast) var(--ease);
+}
+.task-toggle-btn:hover{transform:scale(1.1);}
+.task-toggle-btn:active{transform:scale(0.95);}
+
+/* ---------- flag picker ---------- */
+.flag-picker{display:flex;gap:8px;margin-top:12px;}
+.flag-option{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--border);
+  cursor:pointer;transition:all .18s var(--ease-pop);display:flex;align-items:center;justify-content:center;
+  font-size:12px;animation:popIn .3s var(--ease-pop) both;
+}
+.flag-option:nth-child(1){animation-delay:.02s}
+.flag-option:nth-child(2){animation-delay:.06s}
+.flag-option:nth-child(3){animation-delay:.10s}
+.flag-option:nth-child(4){animation-delay:.14s}
+.flag-option:nth-child(5){animation-delay:.18s}
+.flag-option:hover{transform:scale(1.2) rotate(-6deg);}
+.flag-option.flag-red{background:var(--bad);border-color:var(--bad);color:#fff;}
+.flag-option.flag-yellow{background:var(--accent-hover);border-color:var(--accent-hover);color:#fff;}
+.flag-option.flag-green{background:var(--good);border-color:var(--good);color:#fff;}
+.flag-option.flag-blue{background:var(--accent);border-color:var(--accent);color:#fff;}
+.flag-option.flag-none{background:var(--bg);border-color:var(--border);color:var(--text-faint);}
+
+/* ---------- phase segments ---------- */
+.phase-segment{
+  position:absolute;top:0;bottom:0;
+  background:var(--accent-soft);opacity:0.4;
+  border-right:1px solid var(--border);
+  transition:opacity var(--transition-normal) var(--ease), filter var(--transition-normal) var(--ease);
+}
+.phase-segment.phase-current{
+  opacity:1;
+  border-right:2px solid var(--text);
+  z-index:1;
+  filter:brightness(1.2) saturate(1.3);
+  animation:phasePulse 2s ease-in-out infinite;
+}
+
+/* ---------- interactive element transitions ---------- */
+.btn, .icon-btn, .task-card, .table-cell, .calendar-day, .topbar-tab{
+  transition:transform var(--transition-fast) var(--ease-pop), background var(--transition-fast) var(--ease), border-color var(--transition-fast) var(--ease), color var(--transition-fast) var(--ease), box-shadow var(--transition-fast) var(--ease);
+}
+.btn:active, .icon-btn:active, .task-card:active, .quick-log-btn:active{
+  animation:scaleDown var(--transition-fast) var(--ease);
+}
+.task-card{
+  transition:border-color var(--transition-normal) var(--ease), background-color var(--transition-normal) var(--ease), transform var(--transition-fast) var(--ease-pop), box-shadow var(--transition-fast) var(--ease);
+}

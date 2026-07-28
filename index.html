@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ritmo — Gestión Académica</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%234F46E5' width='100' height='100' rx='20'/><text x='50' y='68' font-size='55' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>R</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/views.css">
+<link rel="stylesheet" href="css/forms.css">
+<link rel="stylesheet" href="css/modals.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a1a1a">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">
+          <span class="brand-mark">R</span>
+          <h1 class="desktop-only">Ritmo</h1>
+        </div>
+      </div>
+      <div class="topbar-center desktop-only">
+        <div class="topbar-tabs">
+          <button class="topbar-tab active" data-tab="today">🏠 Hoy</button>
+          <button class="topbar-tab" data-tab="table">📋 Tabla</button>
+          <button class="topbar-tab" data-tab="calendar">📅 Calendario</button>
+          <button class="topbar-tab" data-tab="tasks">✓ Tareas</button>
+        </div>
+        <div id="viewContextBar" class="view-context-bar"></div>
+      </div>
+      <div class="topbar-actions desktop-only">
+        <button class="icon-btn" id="exportBtn" title="Exportar datos" aria-label="Exportar datos">📤</button>
+        <button class="icon-btn" id="importBtn" title="Importar datos" aria-label="Importar datos">📥</button>
+        <button class="icon-btn" id="themeToggleBtn" title="Modo oscuro" aria-label="Cambiar tema"><span class="theme-icon">🌙</span></button>
+        <button class="icon-btn" id="settingsBtn" title="Configurar semestre" aria-label="Configurar semestre">⚙</button>
+      </div>
+      <div class="topbar-actions mobile-only">
+        <button class="icon-btn" id="mobileSettingsBtn" title="Ajustes" aria-label="Ajustes">⚙️</button>
+      </div>
+    </header>
+
+    <nav class="bottom-nav mobile-only">
+      <button class="bottom-nav-item active" data-tab="today">
+        <span class="bottom-nav-icon">🏠</span>
+        <span class="bottom-nav-label">Hoy</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="table">
+        <span class="bottom-nav-icon">📋</span>
+        <span class="bottom-nav-label">Tabla</span>
+      </button>
+      <button class="bottom-nav-fab" id="mobileNewTaskFab" title="Nueva tarea" aria-label="Nueva tarea">+</button>
+      <button class="bottom-nav-item" data-tab="calendar">
+        <span class="bottom-nav-icon">📅</span>
+        <span class="bottom-nav-label">Calendario</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="tasks">
+        <span class="bottom-nav-icon">✓</span>
+        <span class="bottom-nav-label">Tareas</span>
+      </button>
+    </nav>
+
+    <main class="container">
+      <section id="semesterPanel" class="semester-panel"></section>
+
+      <div id="todayView"></div>
+      <div id="tableView" class="hidden"></div>
+      <div id="calendarView" class="hidden"></div>
+      <div id="tasksView" class="hidden"></div>
+    </main>
+
+    <button class="fab hidden desktop-only" id="newTaskFab" title="Nueva tarea" aria-label="Nueva tarea">+</button>
+    <div id="modalRoot"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(() => console.log('Service Worker registrado'))
+        .catch((err) => console.error('Service Worker error:', err));
+    }
+  </script>
+</body>
+</html>
