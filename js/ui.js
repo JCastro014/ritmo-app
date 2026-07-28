@@ -4,12 +4,13 @@
 import { getState, setActiveWeek, exportData, importData } from './state.js';
 import { parseDate, formatDate, fmtDateLong } from './dateUtils.js';
 import { renderTableView } from './views/tableView.js';
-import { renderCalendarView } from './views/calendarView.js';
 import { renderTodayView } from './views/todayView.js';
 import { renderTaskGrid } from './views/taskGridView.js';
 import { renderSemesterPanel } from './components/semesterPanel.js';
 import { getSelectedWeek, getWeekStartDateForWeek } from './semesterUtils.js';
 import { openSemesterModal, openTaskFormModal } from './modals.js';
+
+// Removed renderViewContext - week navigation now lives in Table view only
 
 export function setupTabs(){
   if(setupTabs.initialized) return;
@@ -43,10 +44,9 @@ function switchTab(tabName){
 
   var todayView = document.getElementById('todayView');
   var tableView = document.getElementById('tableView');
-  var calendarView = document.getElementById('calendarView');
   var tasksView = document.getElementById('tasksView');
-  var views = [todayView, tableView, calendarView, tasksView];
-  var nextView = tabName === 'today' ? todayView : tabName === 'table' ? tableView : tabName === 'calendar' ? calendarView : tasksView;
+  var views = [todayView, tableView, tasksView];
+  var nextView = tabName === 'today' ? todayView : tabName === 'table' ? tableView : tasksView;
   var currentView = views.find(function(view){ return view && !view.classList.contains('hidden'); });
 
   function showNextView(){
@@ -71,10 +71,8 @@ function switchTab(tabName){
     if(fab) fab.classList.toggle('hidden', tabName !== 'tasks');
 
     if(tabName === 'table') renderTableView();
-    else if(tabName === 'calendar') renderCalendarView();
     else if(tabName === 'tasks') renderTaskGrid();
     else if(tabName === 'today') renderTodayView();
-    renderViewContext();
     renderSemesterPanel();
   }
 
@@ -93,37 +91,6 @@ function switchTab(tabName){
   } else {
     showNextView();
   }
-}
-
-function renderViewContext(){
-  var el = document.getElementById('viewContextBar');
-  if(!el) return;
-  var state = getState();
-  if(!state.semester){ el.innerHTML=''; return; }
-  var selectedWeek = getSelectedWeek();
-  var weekStart = getWeekStartDateForWeek(selectedWeek);
-  var weekEnd = weekStart ? new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6) : null;
-  var rangeLabel = weekStart && weekEnd ? fmtDateLong(formatDate(weekStart)) + ' – ' + fmtDateLong(formatDate(weekEnd)) : 'Semana ' + selectedWeek;
-  el.innerHTML =
-    '<div class="view-context-pill">' +
-      '<span class="view-context-label">Semana activa</span>' +
-      '<strong>Semana '+selectedWeek+'</strong>' +
-      '<span class="view-context-range">'+rangeLabel+'</span>' +
-    '</div>' +
-    '<div class="view-context-actions">' +
-      '<button class="icon-btn view-context-btn" data-step="-1" title="Semana anterior" aria-label="Semana anterior">←</button>' +
-      '<button class="icon-btn view-context-btn" data-step="1" title="Semana siguiente" aria-label="Semana siguiente">→</button>' +
-    '</div>';
-  el.querySelectorAll('.view-context-btn').forEach(function(btn){
-    btn.addEventListener('click', async function(){
-      var step = parseInt(btn.getAttribute('data-step'), 10);
-      await setActiveWeek(getSelectedWeek() + step);
-      renderViewContext();
-      renderTableView();
-      renderCalendarView();
-      if(document.querySelector('.tab.active') && document.querySelector('.tab.active').getAttribute('data-tab') === 'tasks'){ renderTaskGrid(); }
-    });
-  });
 }
 
 
@@ -150,10 +117,8 @@ export function initTheme(){
 }
 
 export function renderAll(){
-  renderViewContext();
   renderSemesterPanel();
   renderTableView();
-  renderCalendarView();
   var activeTab = document.querySelector('.topbar-tab.active');
   if(activeTab){
     var activeTabName = activeTab.getAttribute('data-tab');
@@ -168,6 +133,6 @@ export async function handleWeekKeyboardNavigation(e){
   var tagName = document.activeElement && document.activeElement.tagName;
   if(tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') return;
   if(document.getElementById('modalOverlay')) return;
-  if(e.key === 'ArrowLeft'){ e.preventDefault(); await setActiveWeek(getSelectedWeek() - 1); renderViewContext(); renderTableView(); renderCalendarView(); renderTaskGrid(); }
-  if(e.key === 'ArrowRight'){ e.preventDefault(); await setActiveWeek(getSelectedWeek() + 1); renderViewContext(); renderTableView(); renderCalendarView(); renderTaskGrid(); }
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); await setActiveWeek(getSelectedWeek() - 1); renderTableView(); renderTaskGrid(); }
+  if(e.key === 'ArrowRight'){ e.preventDefault(); await setActiveWeek(getSelectedWeek() + 1); renderTableView(); renderTaskGrid(); }
 }

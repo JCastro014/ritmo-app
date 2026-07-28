@@ -17,7 +17,6 @@ const ASSETS = [
   './js/components/semesterPanel.js',
   './js/components/taskCard.js',
   './js/views/tableView.js',
-  './js/views/calendarView.js',
   './js/views/todayView.js',
   './js/views/taskGridView.js',
   './js/modals.js',

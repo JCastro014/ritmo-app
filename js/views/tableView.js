@@ -2,7 +2,7 @@
    RENDER: TABLA DE SEMANAS
 ============================================================ */
 import { getState, removeCourse, setActiveWeek } from '../state.js';
-import { escapeHtml } from '../dateUtils.js';
+import { escapeHtml, fmtDateLong, formatDate } from '../dateUtils.js';
 import { getSemesterStats, getSelectedWeek, getWeekStartDateForWeek, getTasksForWeekAndCourse } from '../semesterUtils.js';
 import { openModal, closeModal, openCellEditor, openFlagPicker, openAddCourseModal } from '../modals.js';
 
@@ -18,7 +18,21 @@ export function renderTableView(){
 
   var state = getState();
   var selectedWeek = getSelectedWeek();
-  var html = '<div class="table-container"><table class="weekly-table"><thead><tr>';
+  var weekStart = getWeekStartDateForWeek(selectedWeek);
+  var weekEnd = weekStart ? new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6) : null;
+  var rangeLabel = weekStart && weekEnd ? fmtDateLong(formatDate(weekStart)) + ' – ' + fmtDateLong(formatDate(weekEnd)) : 'Semana ' + selectedWeek;
+  
+  // Week navigation header
+  var html = '<div class="table-week-nav">';
+  html += '<button class="icon-btn table-week-btn" data-step="-1" aria-label="Semana anterior">←</button>';
+  html += '<div class="table-week-info">';
+  html += '<span class="table-week-label">Semana '+selectedWeek+'</span>';
+  html += '<span class="table-week-range">'+rangeLabel+'</span>';
+  html += '</div>';
+  html += '<button class="icon-btn table-week-btn" data-step="1" aria-label="Semana siguiente">→</button>';
+  html += '</div>';
+  
+  html += '<div class="table-container"><table class="weekly-table"><thead><tr>';
   html += '<th class="week-col">Semana</th>';
   
   state.courses.forEach(function(c){
@@ -79,6 +93,15 @@ export function renderTableView(){
   html += '<button class="btn-add-course" id="addCourseBtn">+ Agregar curso</button>';
 
   el.innerHTML = html;
+
+  // Week navigation event listeners
+  el.querySelectorAll('.table-week-btn').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+      var step = parseInt(btn.getAttribute('data-step'), 10);
+      await setActiveWeek(getSelectedWeek() + step);
+      renderTableView();
+    });
+  });
 
   // Event listeners
   el.querySelectorAll('.course-header-remove').forEach(function(btn){

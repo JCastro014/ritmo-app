@@ -9,7 +9,7 @@ import { renderProgressChart } from './components/heatmap.js';
 import { renderTableView } from './views/tableView.js';
 import { renderTaskGrid } from './views/taskGridView.js';
 import { renderTodayView } from './views/todayView.js';
-import { toggleTheme } from './ui.js';
+import { toggleTheme, renderAll } from './ui.js';
 
 function escListener(e){ if(e.key === "Escape") closeModal(); }
 

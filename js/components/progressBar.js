@@ -4,6 +4,7 @@
 import { clamp } from '../dateUtils.js';
 
 export function mountRulerFill(el, targetPercent){
+  if(!el) return;
   el.style.width = "0%";
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){

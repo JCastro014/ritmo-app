@@ -1,7 +1,7 @@
 /* ============================================================
    PUNTO DE ENTRADA
 ============================================================ */
-import { initializeState, exportData, importData } from './state.js';
+import { initializeState, exportData, importData, subscribeToRemoteChanges } from './state.js';
 import { initTheme, setupTabs, renderAll, handleWeekKeyboardNavigation, toggleTheme } from './ui.js';
 import { openSemesterModal, openTaskFormModal, openSettingsModal } from './modals.js';
 
@@ -10,6 +10,11 @@ async function init(){
   initTheme();
   setupTabs();
   renderAll();
+  
+  // Suscripción a cambios remotos en tiempo real
+  subscribeToRemoteChanges(function(){
+    renderAll();
+  });
   
   // Event listeners globales - Desktop
   var settingsBtn = document.getElementById("settingsBtn");
@@ -22,7 +27,7 @@ async function init(){
   if(exportBtn) exportBtn.addEventListener("click", exportData);
   
   var importBtn = document.getElementById("importBtn");
-  if(importBtn) importBtn.addEventListener("click", importData);
+  if(importBtn) importBtn.addEventListener("click", async function(){ await importData(); renderAll(); });
   
   var newTaskFab = document.getElementById("newTaskFab");
   if(newTaskFab) newTaskFab.addEventListener("click", function(){ openTaskFormModal(null); });

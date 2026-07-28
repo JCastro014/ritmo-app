@@ -31,19 +31,14 @@
         <div class="topbar-tabs">
           <button class="topbar-tab active" data-tab="today">🏠 Hoy</button>
           <button class="topbar-tab" data-tab="table">📋 Tabla</button>
-          <button class="topbar-tab" data-tab="calendar">📅 Calendario</button>
           <button class="topbar-tab" data-tab="tasks">✓ Tareas</button>
         </div>
-        <div id="viewContextBar" class="view-context-bar"></div>
       </div>
       <div class="topbar-actions desktop-only">
         <button class="icon-btn" id="exportBtn" title="Exportar datos" aria-label="Exportar datos">📤</button>
         <button class="icon-btn" id="importBtn" title="Importar datos" aria-label="Importar datos">📥</button>
         <button class="icon-btn" id="themeToggleBtn" title="Modo oscuro" aria-label="Cambiar tema"><span class="theme-icon">🌙</span></button>
         <button class="icon-btn" id="settingsBtn" title="Configurar semestre" aria-label="Configurar semestre">⚙</button>
-      </div>
-      <div class="topbar-actions mobile-only">
-        <button class="icon-btn" id="mobileSettingsBtn" title="Ajustes" aria-label="Ajustes">⚙️</button>
       </div>
     </header>
 
@@ -57,13 +52,13 @@
         <span class="bottom-nav-label">Tabla</span>
       </button>
       <button class="bottom-nav-fab" id="mobileNewTaskFab" title="Nueva tarea" aria-label="Nueva tarea">+</button>
-      <button class="bottom-nav-item" data-tab="calendar">
-        <span class="bottom-nav-icon">📅</span>
-        <span class="bottom-nav-label">Calendario</span>
-      </button>
       <button class="bottom-nav-item" data-tab="tasks">
         <span class="bottom-nav-icon">✓</span>
         <span class="bottom-nav-label">Tareas</span>
+      </button>
+      <button class="bottom-nav-item" id="mobileSettingsBtn">
+        <span class="bottom-nav-icon">⚙️</span>
+        <span class="bottom-nav-label">Ajustes</span>
       </button>
     </nav>
 
@@ -72,7 +67,6 @@
 
       <div id="todayView"></div>
       <div id="tableView" class="hidden"></div>
-      <div id="calendarView" class="hidden"></div>
       <div id="tasksView" class="hidden"></div>
     </main>
 
@@ -80,6 +74,7 @@
     <div id="modalRoot"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="module" src="js/main.js"></script>
   <script>
     if ('serviceWorker' in navigator) {

@@ -28,8 +28,8 @@ export function renderTaskGrid(){
 
   grid.innerHTML = '<div class="task-grid">' + entries.map(function(entry, i){ return taskCardHTML(entry.t, entry.stats, i); }).join("") + '</div>';
 
-  entries.forEach(function(entry, i){
-    var fillEl = document.getElementById("cardbar-" + i);
+  entries.forEach(function(entry){
+    var fillEl = document.getElementById("cardbar-" + entry.t.id);
     mountRulerFill(fillEl, entry.stats.progressPercent);
   });
 

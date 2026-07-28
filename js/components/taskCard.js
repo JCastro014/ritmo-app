@@ -25,7 +25,7 @@ export function taskCardHTML(task, stats, index){
   var typeLabel = task.type === "cantidad" ? "Cantidad" : "Checklist";
   var isInactive = task.active === false;
   var statusLabel = isInactive ? "Pausada" : { ongreen:"Al día", onyellow:"Bien", onattention:"Atención", critical:"Crítico", overdue:"Vencida", done:"Completada", notstarted:"Por iniciar" }[stats.status];
-  var barId = "cardbar-" + index;
+  var barId = "cardbar-" + task.id;
   var icon = task.icon || "📋";
   var categoryColor = task.categoryColor || "";
   var categoryColorVar = categoryColor ? "var(--category-" + categoryColor + ")" : "var(--text-faint)";
