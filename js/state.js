@@ -65,28 +65,58 @@ async function loadState(){
   return { semester: null, courses: [], cells: {}, weekFlags: {}, calendarChecks: {}, tasks: [], cellDetails: {}, activeWeek: null };
 }
 
-async function saveState(){
+// Guardar en localStorage inmediatamente (síncrono)
+function saveToLocal(){
   try{
-    var { error } = await supabaseClient
-      .from('app_state')
-      .update({ data: state })
-      .eq('id', 'ritmo');
-    
-    if(error){
-      throw error;
-    }
-    
-    // Respaldo en localStorage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    console.log('[State] Guardado en localStorage exitosamente');
+    return true;
   }catch(e){
-    console.error("Error al guardar en Supabase:", e);
-    // Intentar guardar solo en localStorage como fallback
+    console.error("Error al guardar en localStorage:", e);
+    return false;
+  }
+}
+
+// Guardar en Supabase con reintentos
+async function saveToCloudWithRetry(maxRetries = 3){
+  for(var attempt = 1; attempt <= maxRetries; attempt++){
     try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }catch(e2){
-      console.error("Error al guardar en localStorage:", e2);
+      console.log('[State] Intento ' + attempt + ' de guardar en Supabase');
+      var { error } = await supabaseClient
+        .from('app_state')
+        .update({ data: state })
+        .eq('id', 'ritmo');
+      
+      if(error){
+        throw error;
+      }
+      
+      console.log('[State] Guardado en Supabase exitosamente');
+      return true;
+    }catch(e){
+      console.error("[State] Error al guardar en Supabase (intento " + attempt + "):", e);
+      if(attempt < maxRetries){
+        // Exponential backoff: 1s, 2s, 4s
+        var delay = Math.pow(2, attempt - 1) * 1000;
+        console.log('[State] Reintentando en ' + delay + 'ms...');
+        await new Promise(function(resolve){ setTimeout(resolve, delay); });
+      }
     }
   }
+  console.error('[State] Fallaron todos los intentos de guardar en Supabase');
+  return false;
+}
+
+async function saveState(){
+  // Guardar en localStorage primero (inmediato y síncrono)
+  var localSaved = saveToLocal();
+  
+  // Guardar en Supabase en background (no bloquea)
+  saveToCloudWithRetry(3).catch(function(e){
+    console.error('[State] Error en guardado asíncrono:', e);
+  });
+  
+  return localSaved;
 }
 
 // API pública del estado

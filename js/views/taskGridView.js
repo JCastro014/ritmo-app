@@ -11,7 +11,6 @@ import { renderTableView } from './tableView.js';
 export function renderTaskGrid(){
   var grid = document.getElementById("tasksView");
   if(!grid) return;
-  grid.innerHTML = '';
   var entries = sortedTaskEntries();
 
   if(entries.length === 0){
@@ -26,7 +25,19 @@ export function renderTaskGrid(){
     return;
   }
 
-  grid.innerHTML = '<div class="task-grid">' + entries.map(function(entry, i){ return taskCardHTML(entry.t, entry.stats, i); }).join("") + '</div>';
+  var existingGrid = grid.querySelector('.task-grid');
+  if(!existingGrid){
+    grid.innerHTML = '<div class="task-grid">' + entries.map(function(entry, i){ return taskCardHTML(entry.t, entry.stats, i); }).join("") + '</div>';
+  } else {
+    // Renderizado incremental: actualizar solo las tarjetas que cambiaron
+    var existingCards = {};
+    existingGrid.querySelectorAll('.task-card').forEach(function(card){
+      existingCards[card.getAttribute('data-id')] = card;
+    });
+
+    var newHTML = entries.map(function(entry, i){ return taskCardHTML(entry.t, entry.stats, i); }).join("");
+    existingGrid.innerHTML = newHTML;
+  }
 
   entries.forEach(function(entry){
     var fillEl = document.getElementById("cardbar-" + entry.t.id);
@@ -41,17 +52,23 @@ export function renderTaskGrid(){
   });
 
   Array.prototype.forEach.call(grid.querySelectorAll(".task-toggle-btn"), function(btn){
-    btn.addEventListener("click", async function(e){
+    btn.addEventListener("click", function(e){
       e.stopPropagation();
       var taskId = btn.getAttribute("data-id");
       var state = getState();
       var task = state.tasks.find(function(t){ return t.id === taskId; });
       if(task){
         task.active = task.active === false ? true : false;
-        await updateTask(taskId, { active: task.active });
+        
+        // Renderizar UI inmediatamente
         renderTaskGrid();
         renderTodayView();
         renderTableView();
+        
+        // Guardar en background
+        updateTask(taskId, { active: task.active }).catch(function(e){
+          console.error('[TaskGrid] Error al guardar:', e);
+        });
       }
     });
   });

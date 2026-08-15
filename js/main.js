@@ -1,9 +1,10 @@
 /* ============================================================
    PUNTO DE ENTRADA
 ============================================================ */
-import { initializeState, exportData, importData, subscribeToRemoteChanges } from './state.js';
+import { initializeState, exportData, importData, subscribeToRemoteChanges, getState } from './state.js';
 import { initTheme, setupTabs, renderAll, handleWeekKeyboardNavigation, toggleTheme } from './ui.js';
 import { openSemesterModal, openTaskFormModal, openSettingsModal } from './modals.js';
+import { getTaskStats } from './taskStats.js';
 
 async function init(){
   await initializeState();

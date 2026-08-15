@@ -9,7 +9,7 @@ import { renderProgressChart } from './components/heatmap.js';
 import { renderTableView } from './views/tableView.js';
 import { renderTaskGrid } from './views/taskGridView.js';
 import { renderTodayView } from './views/todayView.js';
-import { toggleTheme, renderAll } from './ui.js';
+import { toggleTheme, renderAll, showSavingIndicator, showSavedIndicator } from './ui.js';
 
 function escListener(e){ if(e.key === "Escape") closeModal(); }
 
@@ -730,6 +730,10 @@ export function openConfirmModal(title, message, onConfirm, onCancel){
 
 /* ---------- Modal: Detalle de Tarea ---------- */
 function bannerHTML(stats){
+  var diasDeAtraso = (typeof stats.diasDeAtraso === 'number' && !isNaN(stats.diasDeAtraso)) 
+    ? stats.diasDeAtraso 
+    : null;
+  
   if(stats.notStarted){
     return '<div class="detail-status-banner banner-notstarted"><span class="banner-glyph">🕓</span><span>Esta tarea todavía no inicia.</span></div>';
   }
@@ -742,19 +746,19 @@ function bannerHTML(stats){
   if(stats.status === "critical"){
     var msg = stats.daysRemainingDisplay <= 2 && stats.remaining > 0 
       ? "¡Solo " + stats.daysRemainingDisplay + " " + pluralDias(stats.daysRemainingDisplay) + " restantes! Necesitas acelerar."
-      : "Tu ritmo actual (" + stats.ritmoActual.toFixed(1) + ") está muy por debajo del necesario (" + stats.ritmoNecesario.toFixed(1) + ").";
+      : (diasDeAtraso !== null ? "Vas atrasado por " + Math.abs(diasDeAtraso).toFixed(1) + " días respecto al ritmo esperado." : "Actualizando estado...");
     return '<div class="detail-status-banner banner-critical"><span class="banner-glyph">⚠</span><span>'+msg+'</span></div>';
   }
   if(stats.status === "onattention"){
-    var msg = "Vas por debajo del ritmo necesario (" + stats.ritmoActual.toFixed(1) + " vs " + stats.ritmoNecesario.toFixed(1) + "). Requiere atención.";
+    var msg = diasDeAtraso !== null ? "Vas atrasado por " + Math.abs(diasDeAtraso).toFixed(1) + " días. Requiere atención." : "Actualizando estado...";
     return '<div class="detail-status-banner banner-onattention"><span class="banner-glyph">📊</span><span>'+msg+'</span></div>';
   }
   if(stats.status === "onyellow"){
-    var msg = "Vas un poco por debajo del ritmo necesario (" + stats.ritmoActual.toFixed(1) + " vs " + stats.ritmoNecesario.toFixed(1) + "), pero aún tienes margen.";
+    var msg = diasDeAtraso !== null ? "Vas atrasado por " + Math.abs(diasDeAtraso).toFixed(1) + " días, pero aún tienes margen." : "Actualizando estado...";
     return '<div class="detail-status-banner banner-onyellow"><span class="banner-glyph">📊</span><span>'+msg+'</span></div>';
   }
   if(stats.status === "ongreen"){
-    return '<div class="detail-status-banner banner-ongreen"><span class="banner-glyph">✓</span><span>¡Vas al día! Tu ritmo actual cubre el 90%+ de lo necesario.</span></div>';
+    return '<div class="detail-status-banner banner-ongreen"><span class="banner-glyph">✓</span><span>¡Vas al día! Tu atraso es menor a 0.3 días.</span></div>';
   }
   return '<div class="detail-status-banner banner-ongreen"><span class="banner-glyph">✓</span><span>Vas a buen ritmo.</span></div>';
 }
@@ -1008,6 +1012,7 @@ function wireTaskDetail(taskId){
     // Panel de avance rápido +/-
     var quickLogPlus = document.getElementById("quickLogPlus");
     var quickLogMinus = document.getElementById("quickLogMinus");
+    var debounceTimer = null;
     
     function updateQuickLogButtons(){
       var tKey = todayStr();
@@ -1016,31 +1021,55 @@ function wireTaskDetail(taskId){
     }
     updateQuickLogButtons();
     
-    quickLogPlus.addEventListener("click", async function(){
+    quickLogPlus.addEventListener("click", function(){
       var tKey = todayStr();
       if(!task.log) task.log = {};
       task.log[tKey] = (task.log[tKey] || 0) + 1;
-      await updateTask(taskId, { log: task.log });
-      await refreshDetailPartial(taskId);
+      
+      // Renderizar UI inmediatamente
       updateQuickLogButtons();
+      refreshDetailPartial(taskId);
       renderTaskGrid();
       renderTableView();
       renderTodayView();
+      
+      // Debouncing para guardar
+      if(debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function(){
+        showSavingIndicator();
+        updateTask(taskId, { log: task.log }).then(function(){
+          showSavedIndicator();
+        }).catch(function(e){
+          console.error('[TaskDetail] Error al guardar:', e);
+        });
+      }, 300);
     });
     
-    quickLogMinus.addEventListener("click", async function(){
+    quickLogMinus.addEventListener("click", function(){
       var tKey = todayStr();
       if(!task.log) task.log = {};
       var doneToday = Number((task.log||{})[tKey]) || 0;
       if(doneToday > 0){
         task.log[tKey] = doneToday - 1;
         if(task.log[tKey] === 0) delete task.log[tKey];
-        await updateTask(taskId, { log: task.log });
-        await refreshDetailPartial(taskId);
+        
+        // Renderizar UI inmediatamente
         updateQuickLogButtons();
+        refreshDetailPartial(taskId);
         renderTaskGrid();
         renderTableView();
         renderTodayView();
+        
+        // Debouncing para guardar
+        if(debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function(){
+          showSavingIndicator();
+          updateTask(taskId, { log: task.log }).then(function(){
+            showSavedIndicator();
+          }).catch(function(e){
+            console.error('[TaskDetail] Error al guardar:', e);
+          });
+        }, 300);
       }
     });
     
@@ -1056,13 +1085,22 @@ function wireTaskDetail(taskId){
       if(isNaN(amount) || amount < 0){ err.textContent = "Ingresa una cantidad válida."; return; }
       if(!task.log) task.log = {};
       if(amount === 0){ delete task.log[dateVal]; } else { task.log[dateVal] = (task.log[dateVal] || 0) + amount; }
-      await updateTask(taskId, { log: task.log });
+      
+      // Renderizar UI inmediatamente
       document.getElementById("logAmount").value = "";
-      await refreshDetailPartial(taskId);
+      refreshDetailPartial(taskId);
       updateQuickLogButtons();
       renderTaskGrid();
       renderTableView();
       renderTodayView();
+      
+      // Guardar en background
+      showSavingIndicator();
+      updateTask(taskId, { log: task.log }).then(function(){
+        showSavedIndicator();
+      }).catch(function(e){
+        console.error('[TaskDetail] Error al guardar:', e);
+      });
     });
   } else {
     var list = document.getElementById("subtaskList");
@@ -1073,12 +1111,21 @@ function wireTaskDetail(taskId){
       var sub = task.subtasks.find(function(s){ return s.id === sid; });
       if(!sub) return;
       sub.done = !sub.done;
-      await updateTask(taskId, { subtasks: task.subtasks });
+      
+      // Renderizar UI inmediatamente
       item.classList.toggle("done", sub.done);
-      await refreshDetailPartial(taskId);
+      refreshDetailPartial(taskId);
       renderTaskGrid();
       renderTableView();
       renderTodayView();
+      
+      // Guardar en background
+      showSavingIndicator();
+      updateTask(taskId, { subtasks: task.subtasks }).then(function(){
+        showSavedIndicator();
+      }).catch(function(e){
+        console.error('[TaskDetail] Error al guardar:', e);
+      });
     });
 
     var newInput = document.getElementById("newSubtaskInput");
@@ -1087,7 +1134,8 @@ function wireTaskDetail(taskId){
       var val = newInput.value.trim();
       if(!val) return;
       task.subtasks.push({ id: uid(), name: val, done:false });
-      await updateTask(taskId, { subtasks: task.subtasks });
+      
+      // Renderizar UI inmediatamente
       newInput.value = "";
       var newItemHTML =
         '<div class="subtask-item" data-id="'+task.subtasks[task.subtasks.length-1].id+'">' +
@@ -1095,10 +1143,18 @@ function wireTaskDetail(taskId){
           '<span class="subtask-label">'+escapeHtml(val)+'</span>' +
         '</div>';
       list.insertAdjacentHTML("beforeend", newItemHTML);
-      await refreshDetailPartial(taskId);
+      refreshDetailPartial(taskId);
       renderTaskGrid();
       renderTableView();
       renderTodayView();
+      
+      // Guardar en background
+      showSavingIndicator();
+      updateTask(taskId, { subtasks: task.subtasks }).then(function(){
+        showSavedIndicator();
+      }).catch(function(e){
+        console.error('[TaskDetail] Error al guardar:', e);
+      });
     });
   }
 }

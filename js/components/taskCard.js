@@ -13,9 +13,9 @@ export function sortedTaskEntries(){
     var r = rank[a.stats.status] - rank[b.stats.status];
     if(r !== 0) return r;
     if(a.stats.status === "critical" || a.stats.status === "overdue" || a.stats.status === "onattention" || a.stats.status === "onyellow"){
-      var ratioA = a.stats.ritmoNecesario > 0 ? a.stats.ritmoActual / a.stats.ritmoNecesario : 1;
-      var ratioB = b.stats.ritmoNecesario > 0 ? b.stats.ritmoActual / b.stats.ritmoNecesario : 1;
-      return ratioA - ratioB;
+      var diasA = a.stats.diasDeAtraso || 0;
+      var diasB = b.stats.diasDeAtraso || 0;
+      return diasA - diasB;
     }
     return a.stats.daysRemainingDisplay - b.stats.daysRemainingDisplay;
   });

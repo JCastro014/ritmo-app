@@ -129,6 +129,46 @@ export function renderAll(){
   }
 }
 
+// Sistema de notificaciones/toasts
+var toastTimeout = null;
+
+export function showToast(message, duration = 2000){
+  var existingToast = document.getElementById('toast');
+  if(existingToast){
+    existingToast.remove();
+    if(toastTimeout){
+      clearTimeout(toastTimeout);
+    }
+  }
+  
+  var toast = document.createElement('div');
+  toast.id = 'toast';
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  requestAnimationFrame(function(){
+    toast.classList.add('show');
+  });
+  
+  toastTimeout = setTimeout(function(){
+    toast.classList.remove('show');
+    setTimeout(function(){
+      if(toast && toast.parentNode){
+        toast.parentNode.removeChild(toast);
+      }
+    }, 300);
+  }, duration);
+}
+
+export function showSavingIndicator(){
+  showToast('Guardando...', 5000);
+}
+
+export function showSavedIndicator(){
+  showToast('Guardado ✓', 1500);
+}
+
 export async function handleWeekKeyboardNavigation(e){
   var tagName = document.activeElement && document.activeElement.tagName;
   if(tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') return;

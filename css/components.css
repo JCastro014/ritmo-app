@@ -184,3 +184,18 @@
 .task-card{
   transition:border-color var(--transition-normal) var(--ease), background-color var(--transition-normal) var(--ease), transform var(--transition-fast) var(--ease-pop), box-shadow var(--transition-fast) var(--ease);
 }
+
+/* ---------- toast notifications ---------- */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);
+  padding:12px 20px;font-size:14px;font-weight:600;color:var(--text);
+  box-shadow:var(--shadow-lg);z-index:1000;opacity:0;pointer-events:none;
+  transition:opacity .3s var(--ease), transform .3s var(--ease);
+}
+.toast.show{
+  opacity:1;transform:translateX(-50%) translateY(0);
+}
+@media (min-width: 768px){
+  .toast{bottom:24px;}
+}

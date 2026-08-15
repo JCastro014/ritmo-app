@@ -46,10 +46,13 @@ export function statusFromProgress(stats){
   
   if(stats.remaining > 0 && stats.ritmoActual === 0 && stats.daysRemainingDisplay > 2) return "notstarted";
   
-  var ratio = stats.ritmoNecesario > 0 ? stats.ritmoActual / stats.ritmoNecesario : 1;
-  if(ratio >= 0.9) return "ongreen";
-  if(ratio >= 0.7) return "onyellow";
-  if(ratio >= 0.5) return "onattention";
+  var diasDeAtraso = stats.diasDeAtraso || 0;
+  var buffer = stats.ritmoOriginal > 0 ? 0.5 / stats.ritmoOriginal : 0.3;
+  var extraTolerance = Math.max(0, buffer - 0.3);
+  
+  if(diasDeAtraso >= -0.3 - extraTolerance) return "ongreen";
+  if(diasDeAtraso >= -1.0 - extraTolerance) return "onyellow";
+  if(diasDeAtraso >= -2.0 - extraTolerance) return "onattention";
   return "critical";
 }
 
@@ -89,6 +92,11 @@ export function computeCantidadStats(task){
   else if(bt.isOverdue){ ritmoNecesario = remaining; }
   else{ ritmoNecesario = remaining / Math.max(1, workDaysRemaining); }
 
+  var ritmoOriginal = totalUnits / Math.max(1, workDaysTotal);
+  var esperadoHoy = ritmoOriginal * workDaysElapsed;
+  var diferencia = totalDone - esperadoHoy;
+  var diasDeAtraso = ritmoOriginal > 0 ? diferencia / ritmoOriginal : 0;
+
   var statsForStatus = {
     isDone: isDone,
     notStarted: bt.notStarted,
@@ -97,6 +105,8 @@ export function computeCantidadStats(task){
     remaining: remaining,
     ritmoActual: ritmoActual,
     ritmoNecesario: ritmoNecesario,
+    ritmoOriginal: ritmoOriginal,
+    diasDeAtraso: diasDeAtraso,
     exigencia: exigencia
   };
   var status = statusFromProgress(statsForStatus);
@@ -120,6 +130,8 @@ export function computeCantidadStats(task){
     recomendado: recomendado,
     ritmoActual: ritmoActual,
     ritmoNecesario: ritmoNecesario,
+    ritmoOriginal: ritmoOriginal,
+    diasDeAtraso: diasDeAtraso,
     unitLabel: "unidades",
     progressLabel: totalDone + "/" + totalUnits + " unidades"
   };
@@ -145,6 +157,11 @@ export function computeChecklistStats(task){
   else if(bt.isOverdue){ ritmoNecesario = remaining; }
   else{ ritmoNecesario = remaining / Math.max(1, workDaysRemaining); }
   
+  var ritmoOriginal = totalSub / Math.max(1, workDaysTotal);
+  var esperadoHoy = ritmoOriginal * workDaysElapsed;
+  var diferencia = doneSub - esperadoHoy;
+  var diasDeAtraso = ritmoOriginal > 0 ? diferencia / ritmoOriginal : 0;
+  
   var statsForStatus = {
     isDone: isDone,
     notStarted: bt.notStarted,
@@ -152,7 +169,9 @@ export function computeChecklistStats(task){
     daysRemainingDisplay: Math.max(0, workDaysRemaining),
     remaining: remaining,
     ritmoActual: ritmoActual,
-    ritmoNecesario: ritmoNecesario
+    ritmoNecesario: ritmoNecesario,
+    ritmoOriginal: ritmoOriginal,
+    diasDeAtraso: diasDeAtraso
   };
   var status = statusFromProgress(statsForStatus);
   
@@ -170,6 +189,8 @@ export function computeChecklistStats(task){
     doneSub: doneSub,
     ritmoActual: ritmoActual,
     ritmoNecesario: ritmoNecesario,
+    ritmoOriginal: ritmoOriginal,
+    diasDeAtraso: diasDeAtraso,
     progressLabel: doneSub + "/" + totalSub + " subtareas"
   };
 }
