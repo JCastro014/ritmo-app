@@ -7,10 +7,8 @@ import { todayStr, escapeHtml } from '../dateUtils.js';
 import { renderWeeklySummary, renderHeatmap } from '../components/heatmap.js';
 import { openTaskDetail } from '../modals.js';
 
-export function renderTodayView(){
-  var el = document.getElementById("todayView");
-  if(!el) return;
-
+// Genera SOLO el contenido interno de .today-container (sin el wrapper)
+function generateTodayContent(){
   var state = getState();
   var activeTasks = (state.tasks || []).filter(function(task){
     if(task.active === false) return false;
@@ -19,13 +17,11 @@ export function renderTodayView(){
   });
 
   if(activeTasks.length === 0){
-    el.innerHTML =
-      '<div class="today-empty">' +
+    return '<div class="today-empty">' +
         '<div class="glyph">🎉</div>' +
         '<h3>¡Todo al día!</h3>' +
         '<p class="muted">No tienes tareas pendientes para hoy.</p>' +
       '</div>';
-    return;
   }
 
   // Order by urgency: critical > onattention > onyellow > ongreen
@@ -34,8 +30,7 @@ export function renderTodayView(){
     return rank[a.stats.status] - rank[b.stats.status];
   });
 
-  var html = '<div class="today-container">';
-  html += '<div class="today-header"><h2>📋 Tareas para hoy</h2></div>';
+  var html = '<div class="today-header"><h2>📋 Tareas para hoy</h2></div>';
   html += renderWeeklySummary();
   html += '<div class="today-list">';
 
@@ -83,9 +78,25 @@ export function renderTodayView(){
 
   html += '</div>';
   html += renderHeatmap(120);
-  html += '</div>';
+  
+  return html;
+}
 
-  el.innerHTML = html;
+export function renderTodayView(){
+  var el = document.getElementById("todayView");
+  if(!el) return;
+
+  var content = generateTodayContent();
+
+  // Renderizado incremental: verificar si existe el contenedor
+  var existingContainer = el.querySelector('.today-container');
+  if(!existingContainer){
+    // Primera vez: crear el wrapper con el contenido
+    el.innerHTML = '<div class="today-container">' + content + '</div>';
+  } else {
+    // Renders posteriores: solo actualizar el contenido interno
+    existingContainer.innerHTML = content;
+  }
 
   el.querySelectorAll('.today-item').forEach(function(item){
     item.addEventListener('click', function(){

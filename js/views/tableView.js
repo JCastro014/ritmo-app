@@ -6,14 +6,11 @@ import { escapeHtml, fmtDateLong, formatDate } from '../dateUtils.js';
 import { getSemesterStats, getSelectedWeek, getWeekStartDateForWeek, getTasksForWeekAndCourse } from '../semesterUtils.js';
 import { openModal, closeModal, openCellEditor, openFlagPicker, openAddCourseModal } from '../modals.js';
 
-export function renderTableView(){
-  var el = document.getElementById("tableView");
-  if(!el) return;
-  el.innerHTML = '';
+// Genera SOLO el contenido interno de .table-container (sin el wrapper)
+function generateTableContent(){
   var stats = getSemesterStats();
   if(!stats){
-    el.innerHTML = '<p class="muted">Configura el semestre para ver la tabla.</p>';
-    return;
+    return '<p class="muted">Configura el semestre para ver la tabla.</p>';
   }
 
   var state = getState();
@@ -22,7 +19,6 @@ export function renderTableView(){
   var weekEnd = weekStart ? new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6) : null;
   var rangeLabel = weekStart && weekEnd ? fmtDateLong(formatDate(weekStart)) + ' – ' + fmtDateLong(formatDate(weekEnd)) : 'Semana ' + selectedWeek;
   
-  // Week navigation header
   var html = '<div class="table-week-nav">';
   html += '<button class="icon-btn table-week-btn" data-step="-1" aria-label="Semana anterior">←</button>';
   html += '<div class="table-week-info">';
@@ -32,7 +28,7 @@ export function renderTableView(){
   html += '<button class="icon-btn table-week-btn" data-step="1" aria-label="Semana siguiente">→</button>';
   html += '</div>';
   
-  html += '<div class="table-container"><table class="weekly-table"><thead><tr>';
+  html += '<table class="weekly-table"><thead><tr>';
   html += '<th class="week-col">Semana</th>';
   
   state.courses.forEach(function(c){
@@ -89,10 +85,26 @@ export function renderTableView(){
 
   html += '</tbody></table>';
   html += '<button class="fullscreen-btn" id="fullscreenBtn" title="Pantalla completa">⛶</button>';
-  html += '</div>';
-  html += '<button class="btn-add-course" id="addCourseBtn">+ Agregar curso</button>';
+  
+  return html;
+}
 
-  el.innerHTML = html;
+export function renderTableView(){
+  var el = document.getElementById("tableView");
+  if(!el) return;
+  
+  var content = generateTableContent();
+
+  // Renderizado incremental: verificar si existe el contenedor
+  var existingContainer = el.querySelector('.table-container');
+  if(!existingContainer){
+    // Primera vez: crear el wrapper con el contenido
+    el.innerHTML = '<div class="table-container">' + content + '</div>';
+    el.innerHTML += '<button class="btn-add-course" id="addCourseBtn">+ Agregar curso</button>';
+  } else {
+    // Renders posteriores: solo actualizar el contenido interno
+    existingContainer.innerHTML = content;
+  }
 
   // Week navigation event listeners
   el.querySelectorAll('.table-week-btn').forEach(function(btn){

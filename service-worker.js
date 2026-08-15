@@ -1,12 +1,16 @@
-const CACHE_VERSION = '2025-01-27-v1';
+const CACHE_VERSION = '2025-01-27-v2';
 const CACHE_NAME = 'ritmo-' + CACHE_VERSION;
 
 const ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './icon-192.svg',
-  './icon-512.svg',
+  './css/base.css',
+  './css/layout.css',
+  './css/components.css',
+  './css/views.css',
+  './css/forms.css',
+  './css/modals.css',
+  './css/responsive.css',
   './js/main.js',
   './js/state.js',
   './js/dateUtils.js',
@@ -14,13 +18,13 @@ const ASSETS = [
   './js/semesterUtils.js',
   './js/components/progressBar.js',
   './js/components/heatmap.js',
-  './js/components/semesterPanel.js',
   './js/components/taskCard.js',
   './js/views/tableView.js',
   './js/views/todayView.js',
   './js/views/taskGridView.js',
   './js/modals.js',
-  './js/ui.js'
+  './js/ui.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
